@@ -4,7 +4,9 @@ table {
   font: 12px sans-serif;
 }
 
+th,
 td {
   border: 1px black solid;
   padding: 5px;
+  text-align: left;
 }
