@@ -52,6 +52,7 @@ d3.csv("data/chase.csv", function (data) {
         })
         .entries(data);
     var transactions_2020 = transactionsByDate[1];
+    console.log(transactions_2020);
     transactions_2020.values.sort((a, b) => d3.descending(a.key, b.key));
 
     d3.select("body").append("h1").text(transactions_2020.key);
@@ -60,7 +61,7 @@ d3.csv("data/chase.csv", function (data) {
     transactions_2020.values.forEach(function (t) {
         d3.select("body").append("p").attr('class', 'month').text(t.key);
         //https://gist.github.com/jfreels/6734025
-        var table = d3.select("body").append("table");
+        var table = d3.select("body").append("table").attr('class', 'monthly');
         var thead = table.append("thead");
         var tbody = table.append("tbody");
         // headers

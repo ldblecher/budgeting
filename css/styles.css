@@ -1,7 +1,12 @@
+body {
+  font-family: sans-serif;
+}
+
 table {
   border-collapse: collapse;
   border: 2px black solid;
   font: 12px sans-serif;
+  width: 600px;
 }
 
 th,
