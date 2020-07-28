@@ -53,22 +53,6 @@ d3.csv("data/chase.csv", function (data) {
             return d["Month"];
         })
         .entries(data);
-    console.log(data);
-    var monthlySpend = data.filter(function (d) { return d.Type == "Payment" });
-    var monthlyByDate = d3.nest()
-        .key(function (d) {
-            return d["Year"];
-        })
-        .key(function (d) {
-            return d["Month"];
-        })
-        .rollup(function (v) {
-            return d3.sum(v, function (d) { return d.Amount })
-        })
-        .entries(monthlySpend);
-    var monthlySpend2020 = monthlyByDate[1];
-    console.log(monthlyByDate[0])
-    console.log(transactionsByDate);
     var transactions_2020 = transactionsByDate[1];
     transactions_2020.values.sort((a, b) => d3.descending(a.key, b.key));
 
