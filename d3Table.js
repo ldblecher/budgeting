@@ -41,7 +41,9 @@ d3.csv("data/chase.csv", function (data) {
         d["Day"] = transactionDateForm.getDate();
         d["Year"] = transactionDateForm.getFullYear();
         d["Month"] = transactionDateForm.getMonth() + 1;
-        d["Amount"] = formatter.format(+-d["Amount"]);
+        //d["Amount"] = formatter.format(+-d["Amount"]);
+        d["Amount"] = +-d["Amount"];
+
     });
     var transactionsByDate = d3.nest()
         .key(function (d) {
@@ -51,15 +53,42 @@ d3.csv("data/chase.csv", function (data) {
             return d["Month"];
         })
         .entries(data);
+    console.log(data);
+    var monthlySpend = data.filter(function (d) { return d.Type == "Payment" });
+    var monthlyByDate = d3.nest()
+        .key(function (d) {
+            return d["Year"];
+        })
+        .key(function (d) {
+            return d["Month"];
+        })
+        .rollup(function (v) {
+            return d3.sum(v, function (d) { return d.Amount })
+        })
+        .entries(monthlySpend);
+    var monthlySpend2020 = monthlyByDate[1];
+    console.log(monthlyByDate[0])
+    console.log(transactionsByDate);
     var transactions_2020 = transactionsByDate[1];
-    console.log(transactions_2020);
     transactions_2020.values.sort((a, b) => d3.descending(a.key, b.key));
 
     d3.select("body").append("h1").text(transactions_2020.key);
     //.slice().sort((a, b) => d3.descending(a.Month, b.Month))
     var columns = ['Transaction Date', 'Description', 'Category', 'Type', 'Amount'];
     transactions_2020.values.forEach(function (t) {
-        d3.select("body").append("p").attr('class', 'month').text(t.key);
+        var monthly = d3.nest()
+            .key(function (d) {
+                return d["Month"];
+            })
+            .rollup(function (v) {
+                return d3.sum(v, function (d) { return d.Amount })
+            })
+            .entries(t.values.filter(function (d) { return d.Type != "Payment" }));
+        var dollarsMonthly = formatter.format(monthly[0].values);
+        d3.select("body").append("p").attr('class', 'month').text(t.key)
+            .append('span')
+            .attr('class', 'month-total')
+            .text(' - Spend: ' + dollarsMonthly)
         //https://gist.github.com/jfreels/6734025
         var table = d3.select("body").append("table").attr('class', 'monthly');
         var thead = table.append("thead");
@@ -91,7 +120,13 @@ d3.csv("data/chase.csv", function (data) {
                     return 'amount';
                 }
             })
-            .text(function (d) { return d.value; });
+            .text(function (d) {
+                if (d.column == 'Amount') {
+                    return formatter.format(d.value);
+                }
+                return d.value;
+            });
+
         /*// data
         table.append("tbody")
             .selectAll("tr").data(parsedCSV.slice(1))
@@ -107,4 +142,6 @@ d3.csv("data/chase.csv", function (data) {
                 return d;
             });*/
     });
+
+    //list totals
 });
