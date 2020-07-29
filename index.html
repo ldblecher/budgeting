@@ -5,6 +5,12 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
+    <select id="displayType" name="displayType" onChange="changeDisplay()">
+      <option value="continuous">Continuous</option>
+      <option value="monthly" selected="selected">Monthly</option>
+    </select>
+    <div class="transactionTable" id="continuous"></div>
+    <div class="transactionTable" id="monthly"></div>
     <!-- http://bl.ocks.org/ndarville/7075823 -->
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="d3Table.js"></script>

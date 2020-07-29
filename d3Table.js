@@ -1,8 +1,32 @@
-/*d3.text("data/chase.csv", function (data) {
+//Create proper formatting for currency
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+});
+
+var selectedView = document.getElementById("displayType").value;
+document.getElementById(selectedView).style.display = 'block';
+
+function changeDisplay() {
+    var dropDown = document.getElementById("displayType").value;
+
+    if (dropDown === "continuous") {
+        document.getElementById('monthly').style.display = 'none';
+        document.getElementById('continuous').style.display = 'block';
+    }
+    else if (dropDown === "monthly") {
+        document.getElementById('monthly').style.display = 'block';
+        document.getElementById('continuous').style.display = 'none';
+    }
+}
+
+//Create continuous table
+d3.text("data/chase.csv", function (data) {
     var parsedCSV = d3.csv.parseRows(data);
     var table = d3
-        .select("body")
-        .append("table");
+        .select("#continuous")
+        .append("table").attr("id", "continuousTable");
 
     // headers
     table.append("thead").append("tr")
@@ -26,14 +50,9 @@
         .text(function (d) {
             return d;
         });
-});*/
-
-const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
 });
 
+//Create monthly table
 d3.csv("data/chase.csv", function (data) {
     data.forEach(function (d) {
         //Convert to numbers and switch positive and negative amounts
@@ -56,7 +75,8 @@ d3.csv("data/chase.csv", function (data) {
     var transactions_2020 = transactionsByDate[1];
     transactions_2020.values.sort((a, b) => d3.descending(a.key, b.key));
 
-    d3.select("body").append("h1").text(transactions_2020.key);
+    d3.select("#monthly")
+        .append("h1").text(transactions_2020.key);
     //.slice().sort((a, b) => d3.descending(a.Month, b.Month))
     var columns = ['Transaction Date', 'Description', 'Category', 'Type', 'Amount'];
     transactions_2020.values.forEach(function (t) {
@@ -69,12 +89,12 @@ d3.csv("data/chase.csv", function (data) {
             })
             .entries(t.values.filter(function (d) { return d.Type != "Payment" }));
         var dollarsMonthly = formatter.format(monthly[0].values);
-        d3.select("body").append("p").attr('class', 'month').text(t.key)
+        d3.select("#monthly").append("p").attr('class', 'month').text(t.key)
             .append('span')
             .attr('class', 'month-total')
             .text(' - Spend: ' + dollarsMonthly)
         //https://gist.github.com/jfreels/6734025
-        var table = d3.select("body").append("table").attr('class', 'monthly');
+        var table = d3.select("#monthly").append("table").attr('class', 'monthly');
         var thead = table.append("thead");
         var tbody = table.append("tbody");
         // headers

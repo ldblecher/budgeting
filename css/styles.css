@@ -2,6 +2,10 @@ body {
   font-family: sans-serif;
 }
 
+.transactionTable {
+  display: none;
+}
+
 table {
   border-collapse: collapse;
   border: 2px black solid;
@@ -18,4 +22,8 @@ td {
 
 #amount {
   text-align: right;
+}
+
+#continuousTable {
+  margin-top: 22px;
 }
