@@ -8,19 +8,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 var selectedView = document.getElementById("displayType").value;
 document.getElementById(selectedView).style.display = 'block';
 
-function changeDisplay() {
-    var dropDown = document.getElementById("displayType").value;
-
-    if (dropDown === "continuous") {
-        document.getElementById('monthly').style.display = 'none';
-        document.getElementById('continuous').style.display = 'block';
-    }
-    else if (dropDown === "monthly") {
-        document.getElementById('monthly').style.display = 'block';
-        document.getElementById('continuous').style.display = 'none';
-    }
-}
-
 //Create continuous table
 d3.text("data/chase.csv", function (data) {
     var parsedCSV = d3.csv.parseRows(data);
@@ -52,6 +39,10 @@ d3.text("data/chase.csv", function (data) {
         });
 });
 
+//Array of all months
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+    "October", "November", "December"]
+
 //Create monthly table
 d3.csv("data/chase.csv", function (data) {
     data.forEach(function (d) {
@@ -62,7 +53,6 @@ d3.csv("data/chase.csv", function (data) {
         d["Month"] = transactionDateForm.getMonth() + 1;
         //d["Amount"] = formatter.format(+-d["Amount"]);
         d["Amount"] = +-d["Amount"];
-
     });
     var transactionsByDate = d3.nest()
         .key(function (d) {
@@ -89,7 +79,7 @@ d3.csv("data/chase.csv", function (data) {
             })
             .entries(t.values.filter(function (d) { return d.Type != "Payment" }));
         var dollarsMonthly = formatter.format(monthly[0].values);
-        d3.select("#monthly").append("p").attr('class', 'month').text(t.key)
+        d3.select("#monthly").append("p").attr('class', 'month').text(monthNames[t.key - 1])
             .append('span')
             .attr('class', 'month-total')
             .text(' - Spend: ' + dollarsMonthly)
@@ -149,3 +139,16 @@ d3.csv("data/chase.csv", function (data) {
 
     //list totals
 });
+
+function changeDisplay() {
+    var dropDown = document.getElementById("displayType").value;
+
+    if (dropDown === "continuous") {
+        document.getElementById('monthly').style.display = 'none';
+        document.getElementById('continuous').style.display = 'block';
+    }
+    else if (dropDown === "monthly") {
+        document.getElementById('monthly').style.display = 'block';
+        document.getElementById('continuous').style.display = 'none';
+    }
+}
